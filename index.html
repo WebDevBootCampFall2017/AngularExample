@@ -9,7 +9,8 @@
 	<!-- This represents our API -->
 	<script>
 		var users = {'jeremy':'password',
-					 'bob'   :'password2'}
+					 'bob'   :'password2',
+					 'jeff'  :'password3'}
 
 		var entries = [{
 			person: 'jeremy',
@@ -25,11 +26,35 @@
 			person: 'jeremy',
 			food:   'Carrots',
 			calories: '50'
+		},
+		{
+			person: 'jeff',
+			food:   'Apples',
+			calories: '800'
 		}]
 
 		function getEntries(){
 			return entries
 		}
+
+		//New pseudo API function to filter on username
+		function getEntriesForUser(username){
+			//Old code
+			//return entries
+
+			//new list
+			var toRet = []
+
+			//New Code, actually filter
+			for (var i = 0; i<entries.length; i++){
+				if (entries[i].person == username){
+					toRet.push(entries[i])
+				}
+			}
+
+			//Return the final list
+			return toRet
+		}		
 
 		//Pseudo API endpoint for adding a entry
 		function addEntry(user, food, calories){
@@ -47,6 +72,22 @@
 			} else {
 				return false;
 			}
+		}
+
+		//pseudo API function for register
+		function registerUser(username, password){
+			/*
+			var jobj = {
+				username: username,
+				password: password
+			}
+
+			users.push()
+			*/
+
+			//Here is where we should check to see if th eusername is already used
+
+			users[username] = password
 		}
 	</script>
 </head>
@@ -76,28 +117,69 @@
 	        templateUrl : "dashboard.html",
 	        controller: "dashCtrl"
 	    })
+	    .when("/register", {
+	        templateUrl : "register.html",
+	        controller: "regCtrl"
+	    })
 	});
 
 	app.controller('dashCtrl', function($scope, $location) {
-		$scope.entrydata = getEntries();
+		$scope.username = localStorage.getItem("user")
+
+		//New function is getEntriesForUser(usename)
+		$scope.entrydata = getEntriesForUser($scope.username);
+
 		$scope.addEntry = function(){
 			//Get Values in text boxes
 			var cal = $scope.toAddCalories
 			var food = $scope.toAddFood
 
 			//get username for current user
-			var username = localStorage.getItem("user")
+			var username = $scope.username
 
 			//Store them in the database, using an api call
 			//addEntry(user, food, calories)
 
 			addEntry(username, food, cal)
+			$scope.entrydata = getEntriesForUser($scope.username);
 
+		}
+
+		$scope.logout = function(){
+			//Clear the user
+			localStorage.setItem("user", null)
+
+			//Redirect to login screen
+			$location.path("/");
 		}
 	})
 
+	app.controller('regCtrl', function($scope, $location){
+		$scope.doRegister = function (){
+			//Step 1: Check if the username is already used
+			//Should be done in the API function
+
+			//Step 2: Check to see if the two passwords match
+			if ($scope.password == $scope.passwordc){
+				//Step 3: Call api function
+				registerUser($scope.username, $scope.password)
+				$location.path("/");
+			} else {
+				//Show Error
+				$scope.errormsg = "Register Fail - Passwords do not match"
+			}
+
+		}
+	});
+
 	//Create the controller
 	app.controller('myCtrl', function($scope, $location) {
+
+		if (localStorage.getItem("user") 
+			&& localStorage.getItem("user") != "null"){
+			$location.path("dashboard");
+		}
+
 		//Now, do the initialization
     	$scope.doLogin = function(){
     		console.log($scope.username + " "+ $scope.password);
@@ -111,6 +193,8 @@
     			}
     			);
     		*/
+
+    		//Do normal login
     		var result = logIn($scope.username, $scope.password);
     		console.log("Login Result: " + result);
     		if (result) {

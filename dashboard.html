@@ -1,5 +1,9 @@
 <h1> Dashboard </h1>
 
+<!--<a href="!#/logout">Logout</a> -->
+
+<button ng-click="logout()">Log Out</button>
+
 <table class="table-striped">
 	<tr>
 		<th>User</th>
@@ -14,6 +18,10 @@
 
 </table>
 
-<input type="text" name="food" ng-model="toAddFood">
-<input type="text" name="calories" ng-model="toAddCalories">
-<button ng-click="addEntry()">
+<p>
+Food: <input type="text" name="food" ng-model="toAddFood"> 
+<br>
+Calories: <input type="text" name="calories" ng-model="toAddCalories">
+<br>
+<button ng-click="addEntry()">Add Entry</button>
+<p>
