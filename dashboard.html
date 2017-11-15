@@ -1,0 +1,19 @@
+<h1> Dashboard </h1>
+
+<table class="table-striped">
+	<tr>
+		<th>User</th>
+		<th>Food</th>
+		<th>Calories</th>
+	</tr>
+	<tr ng-repeat="entry in entrydata | orderBy: 'calories'">
+		<td>{{entry.person}}</td>
+		<td>{{entry.food}}</td>
+		<td>{{entry.calories}}</td>
+	</tr>
+
+</table>
+
+<input type="text" name="food" ng-model="toAddFood">
+<input type="text" name="calories" ng-model="toAddCalories">
+<button ng-click="addEntry()">

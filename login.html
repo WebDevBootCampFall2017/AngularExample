@@ -1,0 +1,16 @@
+<form class="form">
+	<div ng-show="errormsg" class="alert alert-danger">
+	  <strong>Error</strong> {{errormsg}}
+	</div>
+	<p>
+		Username: <input type="text" name="username" ng-model="username">
+	</p>
+	<p>
+		Password: <input type="password" name="password" ng-model="password">
+	</p>
+	<p>
+		<button ng-click="doLogin()">
+			Log In As {{username}}
+		</button>
+	</p>
+</form>

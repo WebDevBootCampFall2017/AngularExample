@@ -1,0 +1,130 @@
+<html>
+<head>
+	<title>Angular Application</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-route.js"></script>
+	<!-- This represents our API -->
+	<script>
+		var users = {'jeremy':'password',
+					 'bob'   :'password2'}
+
+		var entries = [{
+			person: 'jeremy',
+			food:   'Pizza',
+			calories: '500'
+		},
+		{
+			person: 'jeremy',
+			food:   'French Fries',
+			calories: '300'
+		},
+		{
+			person: 'jeremy',
+			food:   'Carrots',
+			calories: '50'
+		}]
+
+		function getEntries(){
+			return entries
+		}
+
+		//Pseudo API endpoint for adding a entry
+		function addEntry(user, food, calories){
+			//take args, and insert them into the entries list
+			var jobj = {person: user,
+						food: food,
+						calories: calories}
+
+			entries.push(jobj)
+		}
+
+		function logIn(username, password){
+			if (users[username] == password){
+				return true;
+			} else {
+				return false;
+			}
+		}
+	</script>
+</head>
+<body ng-app="mainApp" ng-controller="myCtrl">
+	<div class="container">
+		<div class="row">
+			<!-- Where form used to be -->
+			
+			<!--<p><a href="#/!">Main</a></p>
+			<a href="#!dashboard">Dashboard</a> -->
+			<div ng-view></div>
+		</div>
+	</div>
+</body>
+
+<script type="text/javascript">
+	//Create the module
+	var app = angular.module("mainApp", ["ngRoute"]); 
+
+	app.config(function($routeProvider) {
+	    $routeProvider
+	    .when("/", {
+	        templateUrl : "login.html",
+	        controller: "myCtrl"
+	    })
+	    .when("/dashboard", {
+	        templateUrl : "dashboard.html",
+	        controller: "dashCtrl"
+	    })
+	});
+
+	app.controller('dashCtrl', function($scope, $location) {
+		$scope.entrydata = getEntries();
+		$scope.addEntry = function(){
+			//Get Values in text boxes
+			var cal = $scope.toAddCalories
+			var food = $scope.toAddFood
+
+			//get username for current user
+			var username = localStorage.getItem("user")
+
+			//Store them in the database, using an api call
+			//addEntry(user, food, calories)
+
+			addEntry(username, food, cal)
+
+		}
+	})
+
+	//Create the controller
+	app.controller('myCtrl', function($scope, $location) {
+		//Now, do the initialization
+    	$scope.doLogin = function(){
+    		console.log($scope.username + " "+ $scope.password);
+    		/*
+    		$http.get(...).then(
+    			function(){
+    				//called if the call was successful
+    			},
+    			function(){
+    				//called if the call failed
+    			}
+    			);
+    		*/
+    		var result = logIn($scope.username, $scope.password);
+    		console.log("Login Result: " + result);
+    		if (result) {
+    			//Clear Error
+    			$scope.errormsg = null;
+    			localStorage.setItem("user", $scope.username)
+    			$location.path("dashboard");
+    		} else {
+    			//Else Print error
+    			$scope.errormsg = "Login Failed.";
+    		}
+
+    	};
+	});
+</script>
+
+</html>
